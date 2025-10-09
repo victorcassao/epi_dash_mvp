@@ -1,45 +1,61 @@
-import 'package:epi_dash_mvp/common/config/app_config.dart';
 import 'package:epi_dash_mvp/common/widgets/data_visualization/generic_paginated_data_table.dart';
+import 'package:epi_dash_mvp/modules/admin/controllers/admin_streams_list_controller.dart';
 import 'package:epi_dash_mvp/modules/admin/models/admin_stream_model.dart';
-import 'package:epi_dash_mvp/modules/admin/services/admin_stream_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../auth/controllers/admin_auth_controller.dart';
 
-class AdminStreamsListScreen extends StatefulWidget {
+class AdminStreamsListScreen extends GetView<AdminStreamsListController> {
   const AdminStreamsListScreen({super.key});
 
   @override
-  State<AdminStreamsListScreen> createState() => _AdminStreamsListScreenState();
-}
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Todas as Streams (Admin)"),
+        actions: [
+          // Botão de refresh
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => controller.refresh(),
+          ),
+        ],
+      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-class _AdminStreamsListScreenState extends State<AdminStreamsListScreen> {
-  late Future<List<AdminStreamModel>> _streamsFuture;
-  List<AdminStreamModel> _allStreams = [];
+        if (controller.errorMessage.isNotEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Erro ao carregar streams",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(controller.errorMessage.value),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () => controller.loadStreams(),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("Tentar novamente"),
+                ),
+              ],
+            ),
+          );
+        }
 
-  String? _selectedStatus;
-  String _searchLocation = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _streamsFuture = _fetchAdminStreamModels();
-  }
-
-  Future<List<AdminStreamModel>> _fetchAdminStreamModels() async {
-    final auth = Get.find<AdminAuthController>();
-    final adminStreamService = AdminStreamService(baseUrl: AppConfig.apiBaseUrl);
-    final fetched = await adminStreamService.fetchAllStreams(auth.token.value);
-    _allStreams = fetched;
-    return fetched;
-  }
-
-  List<AdminStreamModel> _filteredStreams() {
-    return _allStreams.where((s) {
-      final matchesLocation = s.cameraLocation.toLowerCase().contains(_searchLocation.toLowerCase());
-      final matchesStatus = _selectedStatus == null || s.streamCurrentStatus == _selectedStatus;
-      return matchesLocation && matchesStatus;
-    }).toList();
+        return GenericPaginatedTable<AdminStreamModel>(
+          title: "Total: ${controller.filteredStreams.length}",
+          columns: _buildColumns(),
+          rows: controller.filteredStreams,
+          rowBuilder: _rowBuilder,
+          filters: _buildFilters(),
+        );
+      }),
+    );
   }
 
   List<DataColumn> _buildColumns() {
@@ -113,7 +129,7 @@ class _AdminStreamsListScreenState extends State<AdminStreamsListScreen> {
   }
 
   Widget _buildFilters() {
-    return Row(
+    return Obx(() => Row(
       children: [
         // Filtro por localização
         Expanded(
@@ -123,64 +139,29 @@ class _AdminStreamsListScreenState extends State<AdminStreamsListScreen> {
               border: OutlineInputBorder(),
               isDense: true,
             ),
-            onChanged: (value) {
-              setState(() => _searchLocation = value);
-            },
+            onChanged: (value) => controller.updateLocationFilter(value),
           ),
         ),
         const SizedBox(width: 16),
 
         // Filtro por status
         DropdownButton<String>(
-          value: _selectedStatus,
+          value: controller.selectedStatus.value,
           hint: const Text("Status da stream"),
           items: const [
             DropdownMenuItem(value: "REQUESTED", child: Text("REQUESTED")),
             DropdownMenuItem(value: "PROCESSING", child: Text("PROCESSING")),
           ],
-          onChanged: (value) {
-            setState(() => _selectedStatus = value);
-          },
+          onChanged: (value) => controller.updateStatusFilter(value),
         ),
         const SizedBox(width: 16),
 
         // Botão limpar
         TextButton(
-          onPressed: () {
-            setState(() {
-              _searchLocation = '';
-              _selectedStatus = null;
-            });
-          },
+          onPressed: () => controller.clearFilters(),
           child: const Text("Limpar filtros"),
         ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Todas as Streams (Admin)")),
-      body: FutureBuilder<List<AdminStreamModel>>(
-        future: _streamsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text("Erro ao carregar: ${snapshot.error}"));
-          }
-
-          return GenericPaginatedTable<AdminStreamModel>(
-            title: "Streams Administrativas",
-            columns: _buildColumns(),
-            rows: _filteredStreams(),
-            rowBuilder: _rowBuilder,
-            filters: _buildFilters(),
-          );
-        },
-      ),
-    );
+    ));
   }
 }

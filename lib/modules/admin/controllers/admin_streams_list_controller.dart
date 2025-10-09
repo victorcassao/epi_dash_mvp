@@ -1,20 +1,18 @@
-import 'package:epi_dash_mvp/modules/streams/models/stream_model.dart';
-import 'package:epi_dash_mvp/modules/streams/services/stream_service.dart';
+import 'package:epi_dash_mvp/modules/admin/models/admin_stream_model.dart';
+import 'package:epi_dash_mvp/modules/admin/services/admin_stream_service.dart';
 import 'package:get/get.dart';
 
-class StreamsListScreenController extends GetxController {
-  final StreamService streamService;
-  final int companyId;
+class AdminStreamsListController extends GetxController {
+  final AdminStreamService streamService;
   final String token;
 
-  StreamsListScreenController({
+  AdminStreamsListController({
     required this.streamService,
-    required this.companyId,
     required this.token,
   });
 
   // ============ STATE ============
-  var streams = <StreamModel>[].obs;
+  var allStreams = <AdminStreamModel>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
@@ -23,14 +21,14 @@ class StreamsListScreenController extends GetxController {
   var searchLocation = ''.obs;
 
   // ============ COMPUTED ============
-  List<StreamModel> get filteredStreams {
-    return streams.where((stream) {
-      final matchesLocation = stream.location
+  List<AdminStreamModel> get filteredStreams {
+    return allStreams.where((stream) {
+      final matchesLocation = stream.cameraLocation
           .toLowerCase()
           .contains(searchLocation.value.toLowerCase());
 
       final matchesStatus = selectedStatus.value == null ||
-          stream.currentStatus == selectedStatus.value;
+          stream.streamCurrentStatus == selectedStatus.value;
 
       return matchesLocation && matchesStatus;
     }).toList();
@@ -48,8 +46,8 @@ class StreamsListScreenController extends GetxController {
     errorMessage.value = '';
 
     try {
-      final data = await streamService.fetchAllStreamsByCompanyId(companyId, token);
-      streams.assignAll(data);
+      final streams = await streamService.fetchAllStreams(token);
+      allStreams.assignAll(streams);
     } catch (e) {
       errorMessage.value = e.toString();
       Get.snackbar(

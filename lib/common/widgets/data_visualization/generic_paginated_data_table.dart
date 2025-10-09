@@ -21,27 +21,53 @@ class GenericPaginatedTable<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Filtros
         if (filters != null)
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: filters!,
           ),
+
+        // Tabela com largura completa
         Expanded(
-          child: SingleChildScrollView(
-            child: PaginatedDataTable(
-              header: Text(title),
-              columns: columns,
-              source: _GenericTableSource<T>(
-                rows: rows,
-                rowBuilder: rowBuilder,
-              ),
-              rowsPerPage: rowsPerPage,
-            ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // ✅ Captura a largura disponível
+              final availableWidth = constraints.maxWidth;
+
+              return SingleChildScrollView(
+                child: SizedBox(
+                  // ✅ Força a tabela a ter pelo menos a largura da tela
+                  width: availableWidth,
+                  child: PaginatedDataTable(
+                    header: Text(title),
+                    columns: columns,
+                    source: _GenericTableSource<T>(
+                      rows: rows,
+                      rowBuilder: rowBuilder,
+                    ),
+                    rowsPerPage: _calculateRowsPerPage(),
+                    showCheckboxColumn: false,
+                    columnSpacing: 20,
+                    horizontalMargin: 16,
+                    headingRowHeight: 56,
+                    showFirstLastButtons: true,
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
     );
+  }
+
+  int _calculateRowsPerPage() {
+    if (rows.isEmpty) return rowsPerPage;
+    if (rows.length < rowsPerPage) return rows.length;
+    return rowsPerPage;
   }
 }
 
@@ -54,7 +80,18 @@ class _GenericTableSource<T> extends DataTableSource {
   @override
   DataRow getRow(int index) {
     if (index >= rows.length) return const DataRow(cells: []);
-    return rowBuilder(rows[index]);
+
+    // ✅ Pegar a linha original
+    final originalRow = rowBuilder(rows[index]);
+
+    // ✅ Adicionar cor alternada (zebra)
+    final isEven = index % 2 == 0;
+    final backgroundColor = isEven ? Colors.grey.shade200 : Colors.white;
+
+    return DataRow(
+      cells: originalRow.cells,
+      color: WidgetStateProperty.all(backgroundColor),
+    );
   }
 
   @override

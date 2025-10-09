@@ -1,42 +1,66 @@
-import 'package:epi_dash_mvp/common/config/app_config.dart';
 import 'package:epi_dash_mvp/common/widgets/data_visualization/generic_paginated_data_table.dart';
 import 'package:epi_dash_mvp/modules/streams/controllers/streams_list_screen_controller.dart';
 import 'package:epi_dash_mvp/modules/streams/models/stream_model.dart';
-import 'package:epi_dash_mvp/modules/streams/services/stream_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../auth/controllers/auth_controller.dart';
 
-class StreamListScreen extends StatefulWidget {
+class StreamListScreen extends GetView<StreamsListScreenController> {
   const StreamListScreen({super.key});
 
   @override
-  State<StreamListScreen> createState() => _StreamListScreenState();
-}
-
-class _StreamListScreenState extends State<StreamListScreen> {
-  late final StreamsListScreenController ctrl;
-
-  List<StreamModel> _allStreams = [];
-  String? _selectedStatus;
-  String _searchLocation = '';
-
-  @override
-  void initState() {
-    super.initState();
-    final auth = Get.find<AuthController>();
-    final user = auth.user.value;
-
-    ctrl = Get.put(
-      StreamsListScreenController(
-        streamService: StreamService(baseUrl: AppConfig.apiBaseUrl),
-        companyId: user!.employee!.company!.companyId,
-        token: auth.token.value,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Streams cadastradas"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => controller.refresh(),
+          ),
+        ],
       ),
-    );
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    ctrl.loadStreams();
-    _allStreams = ctrl.streams;
+        if (controller.errorMessage.isNotEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Erro ao carregar streams",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(controller.errorMessage.value),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () => controller.loadStreams(),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("Tentar novamente"),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return GenericPaginatedTable<StreamModel>(
+          title: "Streams (${controller.filteredStreams.length})",
+          columns: _buildColumns(),
+          rows: controller.filteredStreams,
+          rowBuilder: _rowBuilder,
+          filters: _buildFilters(),
+        );
+      }),
+    );
   }
 
   List<DataColumn> _buildColumns() {
@@ -56,12 +80,12 @@ class _StreamListScreenState extends State<StreamListScreen> {
   DataRow _rowBuilder(StreamModel item) {
     return DataRow(
       cells: [
-        DataCell(SelectableText(item.location ?? "-")),
-        DataCell(SelectableText(item.model ?? "-")),
+        DataCell(SelectableText(item.location)),
+        DataCell(SelectableText(item.model)),
         DataCell(
           Icon(
-            item.isActive == true ? Icons.check : Icons.close,
-            color: item.isActive == true ? Colors.green : Colors.red,
+            item.isActive ? Icons.check : Icons.close,
+            color: item.isActive ? Colors.green : Colors.red,
           ),
         ),
         DataCell(
@@ -74,7 +98,7 @@ class _StreamListScreenState extends State<StreamListScreen> {
         DataCell(
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 140),
-            child: Text(item.currentStatus ?? "-"),
+            child: Text(item.currentStatus),
           ),
         ),
         DataCell(
@@ -83,7 +107,7 @@ class _StreamListScreenState extends State<StreamListScreen> {
             child: Text(item.formattedLastStatus),
           ),
         ),
-        DataCell(Text(item.shouldStream == true ? "Sim" : "Não")),
+        DataCell(Text(item.shouldStream ? "Sim" : "Não")),
         DataCell(
           Row(
             children: [
@@ -100,16 +124,8 @@ class _StreamListScreenState extends State<StreamListScreen> {
     );
   }
 
-  List<StreamModel> _filteredStreams() {
-    return _allStreams.where((s) {
-      final matchesLocation = s.location.toLowerCase().contains(_searchLocation.toLowerCase());
-      final matchesStatus = _selectedStatus == null || s.currentStatus == _selectedStatus;
-      return matchesLocation && matchesStatus;
-    }).toList();
-  }
-
   Widget _buildFilters() {
-    return Row(
+    return Obx(() => Row(
       children: [
         // Filtro por localização
         Expanded(
@@ -119,58 +135,29 @@ class _StreamListScreenState extends State<StreamListScreen> {
               border: OutlineInputBorder(),
               isDense: true,
             ),
-            onChanged: (value) {
-              setState(() => _searchLocation = value);
-            },
+            onChanged: (value) => controller.updateLocationFilter(value),
           ),
         ),
         const SizedBox(width: 16),
 
         // Filtro por status
         DropdownButton<String>(
-          value: _selectedStatus,
+          value: controller.selectedStatus.value,
           hint: const Text("Status da stream"),
           items: const [
             DropdownMenuItem(value: "REQUESTED", child: Text("REQUESTED")),
             DropdownMenuItem(value: "PROCESSING", child: Text("PROCESSING")),
           ],
-          onChanged: (value) {
-            setState(() => _selectedStatus = value);
-          },
+          onChanged: (value) => controller.updateStatusFilter(value),
         ),
         const SizedBox(width: 16),
 
         // Botão limpar
         TextButton(
-          onPressed: () {
-            setState(() {
-              _searchLocation = '';
-              _selectedStatus = null;
-            });
-          },
+          onPressed: () => controller.clearFilters(),
           child: const Text("Limpar filtros"),
         ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Streams cadastradas")),
-      body: Obx(() {
-        if (ctrl.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        return GenericPaginatedTable<StreamModel>(
-          title: "Streams",
-          columns: _buildColumns(),
-          rows: _filteredStreams(),
-          rowBuilder: _rowBuilder,
-          filters: _buildFilters(),
-        );
-
-      }),
-    );
+    ));
   }
 }

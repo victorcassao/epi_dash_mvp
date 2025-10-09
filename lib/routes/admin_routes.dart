@@ -6,4 +6,6 @@ class AdminRoutes{
   static const adminStreamDetail = "$baseAdminUrl/streams/:stream_id";
   static const adminAlerts = "$baseAdminUrl/alerts";
   static const addCompany = "$baseAdminUrl/company/new";
+  static const addEmployee = "$baseAdminUrl/employee/new";
+  static const addCamera = "$baseAdminUrl/camera/new";
 }

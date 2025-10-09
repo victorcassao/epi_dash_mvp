@@ -2,7 +2,8 @@ import 'package:epi_dash_mvp/auth/middlewares/auth_middleware.dart';
 import 'package:epi_dash_mvp/auth/screens/admin_login_screen.dart';
 import 'package:epi_dash_mvp/auth/screens/login_screen.dart';
 import 'package:epi_dash_mvp/common/base_layout.dart';
-import 'package:epi_dash_mvp/modules/admin/screens/admin_streams_list_screen.dart';
+import 'package:epi_dash_mvp/modules/streams/bindings/stream_detail_bindings.dart';
+import 'package:epi_dash_mvp/modules/streams/bindings/stream_list_bindings.dart';
 import 'package:epi_dash_mvp/modules/streams/screens/streams_detail_screen.dart';
 import 'package:epi_dash_mvp/modules/streams/screens/streams_list_screen.dart';
 import 'package:epi_dash_mvp/routes/admin_routes.dart';
@@ -24,11 +25,13 @@ class AppRoutes {
     GetPage(
       name: Routes.streamDetailsWithId,
       page: () => BaseLayout(body: StreamDetailScreen()),
+      binding: StreamDetailBindings(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(
       name: Routes.listStreams,
       page: () => BaseLayout(body: StreamListScreen()),
+      binding: StreamListBindings(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(

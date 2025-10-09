@@ -1,5 +1,3 @@
-import 'package:epi_dash_mvp/auth/services/admin_auth_service.dart';
-import 'package:epi_dash_mvp/auth/services/admin_auth_storage.dart';
 import 'package:epi_dash_mvp/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,12 +20,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   @override
   void initState() {
     super.initState();
-    auth = Get.put(
-      AdminAuthController(
-        authService: AdminAuthService(baseUrl: 'http://localhost:80/api/v1'),
-        authStorage: AdminAuthStorage(),
-      ),
-    );
+    auth = Get.find<AdminAuthController>();
   }
 
   @override

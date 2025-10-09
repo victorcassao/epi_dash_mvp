@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class AdminHlsPlayer extends StatefulWidget {
+class HlsPlayer extends StatefulWidget {
   final String hlsUrl;
 
-  const AdminHlsPlayer({
-    Key? key,
+  const HlsPlayer({
+    super.key,
     required this.hlsUrl,
-  }) : super(key: key);
+  });
 
   @override
-  State<AdminHlsPlayer> createState() => _AdminHlsPlayerState();
+  State<HlsPlayer> createState() => _HlsPlayerState();
 }
 
-class _AdminHlsPlayerState extends State<AdminHlsPlayer> {
+class _HlsPlayerState extends State<HlsPlayer> {
   VideoPlayerController? _controller;
   bool _isInitialized = false;
   String? _errorMessage;
@@ -25,7 +25,7 @@ class _AdminHlsPlayerState extends State<AdminHlsPlayer> {
   }
 
   @override
-  void didUpdateWidget(covariant AdminHlsPlayer oldWidget) {
+  void didUpdateWidget(covariant HlsPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Reinicializa o player se a URL da stream mudar
     if (oldWidget.hlsUrl != widget.hlsUrl) {
@@ -41,7 +41,9 @@ class _AdminHlsPlayerState extends State<AdminHlsPlayer> {
     });
 
     try {
-      final controller = VideoPlayerController.networkUrl(Uri.parse(widget.hlsUrl));
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.hlsUrl),
+      );
       _controller = controller;
 
       await controller.initialize();

@@ -11,6 +11,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: "EPI Dashboard",
+      // initialBinding: AppBindings(),
       getPages: [...AppRoutes.pages, ...AdminAppRoutes.pages],
       defaultTransition: Transition.noTransition,
       initialRoute: Routes.login,
