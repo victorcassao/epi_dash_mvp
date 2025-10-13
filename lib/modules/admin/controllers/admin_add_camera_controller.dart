@@ -2,6 +2,7 @@ import 'package:epi_dash_mvp/modules/admin/models/admin_camera_model.dart';
 import 'package:epi_dash_mvp/modules/admin/models/admin_company_model.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_camera_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_company_service.dart';
+import 'package:epi_dash_mvp/routes/admin_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -57,7 +58,6 @@ class AdminAddCameraController extends GetxController {
   Future<void> createCamera({
     required String location,
     required String model,
-    required int targetFps,
   }) async {
     // Validação
     if (selectedCompany.value == null) {
@@ -78,7 +78,6 @@ class AdminAddCameraController extends GetxController {
       final camera = AdminCameraModel(
         location: location,
         model: model,
-        targetFps: targetFps,
         companyId: selectedCompany.value!.id!,
       );
 
@@ -94,7 +93,9 @@ class AdminAddCameraController extends GetxController {
       );
 
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.back(); // Volta para tela anterior
+      Get.toNamed(
+        AdminRoutes.adminListStreams
+      ); // Volta para tela anterior
     } catch (e) {
       errorMessage.value = e.toString();
       Get.snackbar(

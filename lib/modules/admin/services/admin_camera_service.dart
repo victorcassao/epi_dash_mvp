@@ -19,13 +19,12 @@ class AdminCameraService {
     };
   }
 
-  /// Criar nova câmera
   Future<AdminCameraModel> createCamera(
       AdminCameraModel camera,
       String token,
       ) async {
     // TODO: Implementar quando API estiver pronta
-    final url = Uri.parse('$baseUrl/admin/cameras');
+    final url = Uri.parse('$baseUrl/company/${camera.companyId}/cameras');
 
     try {
       final response = await http.post(
@@ -36,7 +35,16 @@ class AdminCameraService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return AdminCameraModel.fromJson(data);
+        print(data);
+        final newCamera = AdminCameraModel(
+          id: data["id"],
+          location: data["location"],
+          model: data["model"],
+          targetFps: 2,
+          companyId: camera.companyId
+        );
+        print(newCamera);
+        return newCamera;
       } else {
         throw Exception('Erro ao criar câmera: ${response.statusCode}');
       }

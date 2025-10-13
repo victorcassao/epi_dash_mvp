@@ -13,7 +13,6 @@ class AdminAddCameraScreen extends GetView<AdminAddCameraController> {
     final formKey = GlobalKey<FormState>();
     final locationCtrl = TextEditingController();
     final modelCtrl = TextEditingController();
-    final fpsCtrl = TextEditingController(text: '30');
 
     return Scaffold(
       body: Center(
@@ -119,34 +118,6 @@ class AdminAddCameraScreen extends GetView<AdminAddCameraController> {
                       },
                     ),
                     const SizedBox(height: 16),
-
-                    // FPS
-                    TextFormField(
-                      controller: fpsCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'FPS (Frames por segundo) *',
-                        hintText: 'Padrão: 30',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.speed),
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Informe o FPS';
-                        }
-                        final fps = int.tryParse(value);
-                        if (fps == null || fps <= 0) {
-                          return 'FPS deve ser maior que 0';
-                        }
-                        if (fps > 60) {
-                          return 'FPS máximo: 60';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
                     // Botões
                     Obx(() {
                       final loading = controller.isLoading.value;
@@ -161,7 +132,6 @@ class AdminAddCameraScreen extends GetView<AdminAddCameraController> {
                                   controller.createCamera(
                                     location: locationCtrl.text.trim(),
                                     model: modelCtrl.text.trim(),
-                                    targetFps: int.parse(fpsCtrl.text.trim()),
                                   );
                                 }
                               },

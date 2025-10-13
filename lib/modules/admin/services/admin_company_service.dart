@@ -17,17 +17,18 @@ class AdminCompanyService {
 
   Future<List<AdminCompanyModel>> fetchAllCompanies(String token) async {
     // TODO: Implementar quando API estiver pronta
-    final url = Uri.parse('$baseUrl/admin/companies');
+    final url = Uri.parse('$baseUrl/admin/company');
 
     try {
       final response = await http.get(
         url,
         headers: _buildHeaders(token),
       );
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => AdminCompanyModel.fromJson(json)).toList();
+        final body = jsonDecode(response.body);
+        final List list = body['items'];
+        return list.map((json) => AdminCompanyModel.fromJson(json)).toList();
       } else {
         throw Exception('Erro ao carregar empresas: ${response.statusCode}');
       }
