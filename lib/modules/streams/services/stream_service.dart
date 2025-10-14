@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:epi_dash_mvp/constants/api_endpoints.dart';
 import 'package:http/http.dart' as http;
 import '../models/stream_model.dart';
 
 class StreamService {
-  final String baseUrl;
+  final UserEndpoints endpoints;
 
-  StreamService({required this.baseUrl});
+  StreamService({required this.endpoints});
 
   Map<String, String> _buildAndGetHeader(String token) {
     return {
@@ -19,8 +20,9 @@ class StreamService {
       int streamId,
       String token
       ) async {
-    print("Fetching for $companyId and stream $streamId");
-    final url = Uri.parse('$baseUrl/company/$companyId/streams/$streamId');
+
+    final url = endpoints.streamById(companyId, streamId);
+
     final response = await http.get(
       url,
       headers: _buildAndGetHeader(token)
@@ -36,7 +38,7 @@ class StreamService {
 
   Future<List<StreamModel>> fetchAllStreamsByCompanyId(int companyId, String token) async {
     print("fetching for $companyId");
-    final url = Uri.parse('$baseUrl/company/$companyId/streams?page=1&page_size=100');
+    final url = endpoints.streams(companyId);
     final response = await http.get(
       url,
       headers: _buildAndGetHeader(token)

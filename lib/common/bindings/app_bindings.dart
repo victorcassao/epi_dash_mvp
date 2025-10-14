@@ -4,9 +4,10 @@ import 'package:epi_dash_mvp/auth/services/admin_auth_service.dart';
 import 'package:epi_dash_mvp/auth/services/admin_auth_storage.dart';
 import 'package:epi_dash_mvp/auth/services/auth_service.dart';
 import 'package:epi_dash_mvp/auth/services/auth_storage.dart';
-import 'package:epi_dash_mvp/common/config/app_config.dart';
+import 'package:epi_dash_mvp/common/config/environment.dart';
 import 'package:epi_dash_mvp/common/controllers/admin_sidebar_controller.dart';
 import 'package:epi_dash_mvp/common/controllers/sidebar_controller.dart';
+import 'package:epi_dash_mvp/constants/api_endpoints.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_camera_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_company_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_employee_service.dart';
@@ -17,6 +18,28 @@ import 'package:get/get.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
+    final appConfig = Get.find<AppConfig>();
+    // ============ ENDPOINTS (SINGLETON) ==================
+    Get.put<AuthEndpoints>(
+      AuthEndpoints(appConfig.apiBaseUrl),
+      permanent: true
+    );
+
+    Get.put<AdminEndpoints>(
+      AdminEndpoints(appConfig.apiBaseUrl),
+      permanent: true,
+    );
+
+    Get.put<UserEndpoints>(
+      UserEndpoints(appConfig.apiBaseUrl),
+      permanent: true,
+    );
+
+    Get.put<HlsEndpoints>(
+      HlsEndpoints(appConfig.hlsBaseUrl),
+      permanent: true,
+    );
+
     // ============ STORAGE ==================
     Get.put<AuthStorage>(
       AuthStorage(),
@@ -31,38 +54,38 @@ class AppBindings extends Bindings {
     // ============ SERVICES ==================
     // ======== ADMIN SERVICES ========
     Get.put<AdminAuthService>(
-      AdminAuthService(baseUrl: AppConfig.apiBaseUrl),
+      AdminAuthService(endpoints: Get.find<AuthEndpoints>()),
       permanent: true,
     );
 
     Get.put<AdminCameraService>(
-      AdminCameraService(baseUrl: AppConfig.apiBaseUrl),
+      AdminCameraService(endpoints: Get.find<AdminEndpoints>()),
       permanent: true,
     );
 
     Get.put<AdminCompanyService>(
-      AdminCompanyService(baseUrl: AppConfig.apiBaseUrl),
+      AdminCompanyService(endpoints: Get.find<AdminEndpoints>()),
       permanent: true,
     );
 
     Get.put<AdminEmployeeService>(
-      AdminEmployeeService(baseUrl: AppConfig.apiBaseUrl),
+      AdminEmployeeService(endpoints: Get.find<AdminEndpoints>()),
       permanent: true,
     );
 
     Get.put<AdminStreamService>(
-      AdminStreamService(baseUrl: AppConfig.apiBaseUrl),
+      AdminStreamService(endpoints: Get.find<AdminEndpoints>()),
       permanent: true,
     );
 
     // ======== USER SERVICES ========
     Get.put<AuthService>(
-      AuthService(baseUrl: AppConfig.apiBaseUrl),
+      AuthService(endpoints: Get.find<AuthEndpoints>()),
       permanent: true,
     );
 
     Get.put<StreamService>(
-      StreamService(baseUrl: AppConfig.apiBaseUrl),
+      StreamService(endpoints: Get.find<UserEndpoints>()),
       permanent: true,
     );
 
@@ -93,6 +116,5 @@ class AppBindings extends Bindings {
       AdminSidebarController(),
       permanent: true,
     );
-
   }
 }

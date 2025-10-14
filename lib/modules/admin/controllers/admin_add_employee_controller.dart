@@ -2,6 +2,7 @@ import 'package:epi_dash_mvp/modules/admin/models/admin_company_model.dart';
 import 'package:epi_dash_mvp/modules/admin/models/admin_employee_model.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_company_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_employee_service.dart';
+import 'package:epi_dash_mvp/routes/admin_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,11 +37,8 @@ class AdminAddEmployeeController extends GetxController {
     try {
       final data = await companyService.fetchAllCompanies(token);
       companies.assignAll(data);
+      selectedCompany.value = null;
 
-      // Seleciona primeira empresa automaticamente se houver
-      if (companies.isNotEmpty) {
-        selectedCompany.value = companies.first;
-      }
     } catch (e) {
       Get.snackbar(
         'Erro',
@@ -54,12 +52,12 @@ class AdminAddEmployeeController extends GetxController {
     }
   }
 
+  // ✅ Removido parâmetro "role"
   Future<void> createEmployee({
     required String name,
     required String email,
     required String username,
     required String password,
-    required String role,
   }) async {
     // Validação
     if (selectedCompany.value == null) {
@@ -77,20 +75,21 @@ class AdminAddEmployeeController extends GetxController {
     errorMessage.value = '';
 
     try {
+      // ✅ Criando employee sem role
       final employee = AdminEmployeeModel(
         name: name,
         email: email,
         username: username,
         password: password,
-        role: role,
         companyId: selectedCompany.value!.id!,
+        // role não é mais enviado
       );
 
       await employeeService.createEmployee(employee, token);
 
       Get.snackbar(
         'Sucesso',
-        'Empregado cadastrado com sucesso!',
+        'Funcionário cadastrado com sucesso!',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -98,12 +97,12 @@ class AdminAddEmployeeController extends GetxController {
       );
 
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.back(); // Volta para tela anterior
+      Get.toNamed(AdminRoutes.adminListStreams);
     } catch (e) {
       errorMessage.value = e.toString();
       Get.snackbar(
         'Erro',
-        'Não foi possível cadastrar empregado: ${e.toString()}',
+        'Não foi possível cadastrar funcionário: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,

@@ -3,10 +3,12 @@ import 'package:epi_dash_mvp/auth/screens/admin_login_screen.dart';
 import 'package:epi_dash_mvp/common/admin_base_layout.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_add_camera_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_add_company_bindings.dart';
+import 'package:epi_dash_mvp/modules/admin/bindings/admin_add_employee_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_stream_detail_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_streams_list_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_add_camera_screen.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_add_company_screen.dart';
+import 'package:epi_dash_mvp/modules/admin/screens/admin_add_employee_screen.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_stream_detail_screen.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_streams_list_screen.dart';
 import 'package:epi_dash_mvp/routes/admin_routes.dart';
@@ -48,6 +50,12 @@ class AdminAppRoutes {
       name: AdminRoutes.addCamera,
       page: () => const AdminBaseLayout(body: AdminAddCameraScreen()),
       binding: AdminAddCameraBindings(),
+      middlewares: [AdminAuthMiddleware()],
+    ),
+    GetPage(
+      name: AdminRoutes.addEmployee,
+      page: () => const AdminBaseLayout(body: AdminAddEmployeeScreen()),
+      binding: AdminAddEmployeeBindings(),
       middlewares: [AdminAuthMiddleware()],
     )
   ];

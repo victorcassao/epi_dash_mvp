@@ -1,10 +1,7 @@
-// ==========================================
-// lib/modules/streams/media_player/stream_player_switcher.dart
-// CRIAR ESTE ARQUIVO COMPLETO
-// ==========================================
-
+import 'package:epi_dash_mvp/constants/api_endpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:get/get.dart';
 
 class StreamPlayerSwitcher extends StatefulWidget {
   final String accessKey;
@@ -30,8 +27,11 @@ class _StreamPlayerSwitcherState extends State<StreamPlayerSwitcher> {
   }
 
   String get _currentUrl {
-    final base = selectedType == 'original' ? 'live' : 'processed';
-    return 'http://localhost:8888/$base/${widget.accessKey}/index.m3u8';
+    final hlsPlayer = Get.find<HlsEndpoints>();
+    if (selectedType == 'original'){
+      return hlsPlayer.liveStream(widget.accessKey).toString();
+    }
+    return hlsPlayer.processedStream(widget.accessKey).toString();
   }
 
   String get _videoTypeLabel {

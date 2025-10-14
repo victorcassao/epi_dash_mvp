@@ -50,6 +50,13 @@ class AdminSidebar extends StatelessWidget {
         selected: controller.selectedRoute.value == AdminRoutes.addCompany,
         onTap: () => controller.select(AdminRoutes.addCompany),
       ),
+      AdminSidebarItem(
+        label: "Cadastrar Funcionário",
+        icon: Icons.person_add,
+        route: AdminRoutes.addEmployee,
+        selected: controller.selectedRoute.value == AdminRoutes.addEmployee,
+        onTap: () => controller.select(AdminRoutes.addEmployee),
+      ),
     ];
   }
 

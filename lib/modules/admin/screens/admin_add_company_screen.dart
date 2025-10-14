@@ -2,6 +2,7 @@
 import 'package:epi_dash_mvp/modules/admin/controllers/admin_add_company_controller.dart';
 import 'package:epi_dash_mvp/routes/admin_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // ✅ Importado para FilteringTextInputFormatter
 import 'package:get/get.dart';
 
 class AdminAddCompanyScreen extends GetView<AdminAddCompanyController> {
@@ -61,15 +62,21 @@ class AdminAddCompanyScreen extends GetView<AdminAddCompanyController> {
                         labelText: 'CNPJ *',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.badge),
-                        hintText: '00.000.000/0000-00',
+                        hintText: '00000000000000',
+                        helperText: 'Apenas números (14 dígitos)',
                       ),
                       keyboardType: TextInputType.number,
+                      // ✅ Limita a entrada para 14 dígitos numéricos
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly, // Apenas números
+                        LengthLimitingTextInputFormatter(14), // Máximo 14 caracteres
+                      ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Informe o CNPJ';
                         }
-                        if (value.length < 14) {
-                          return 'CNPJ deve ter no mínimo 14 dígitos';
+                        if (value.length != 14) {
+                          return 'CNPJ deve ter exatamente 14 dígitos';
                         }
                         return null;
                       },
@@ -104,6 +111,7 @@ class AdminAddCompanyScreen extends GetView<AdminAddCompanyController> {
                                     cnpj: cnpjController.text.trim(),
                                   );
                                 }
+                                Get.toNamed(AdminRoutes.adminListStreams);
                               },
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 16),

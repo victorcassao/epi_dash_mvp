@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'package:epi_dash_mvp/auth/models/user_profile_model.dart';
+import 'package:epi_dash_mvp/constants/api_endpoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AuthService {
-  final String baseUrl;
+  final AuthEndpoints endpoints;
 
-  AuthService({required this.baseUrl});
+  AuthService({required this.endpoints});
 
   Future<String> login({
     required String username,
     required String password,
   }) async {
-    final url = Uri.parse('$baseUrl/authentication/user');
+    final url = endpoints.login;
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -41,7 +42,7 @@ class AuthService {
   }
 
   Future<UserProfile> getCurrentUserProfile(String token) async {
-    final url = Uri.parse('$baseUrl/me');
+    final url = endpoints.me;
 
     final response = await http.get(
       url,

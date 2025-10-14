@@ -38,10 +38,14 @@ class AdminAddCameraController extends GetxController {
       final data = await companyService.fetchAllCompanies(token);
       companies.assignAll(data);
 
-      // Seleciona primeira empresa automaticamente se houver
-      if (companies.isNotEmpty) {
-        selectedCompany.value = companies.first;
-      }
+      // ❌ REMOVIDO: Não seleciona automaticamente a primeira empresa
+      // if (companies.isNotEmpty) {
+      //   selectedCompany.value = companies.first;
+      // }
+
+      // ✅ NOVO: Deixa em branco (null)
+      selectedCompany.value = null;
+
     } catch (e) {
       Get.snackbar(
         'Erro',
@@ -93,9 +97,7 @@ class AdminAddCameraController extends GetxController {
       );
 
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.toNamed(
-        AdminRoutes.adminListStreams
-      ); // Volta para tela anterior
+      Get.toNamed(AdminRoutes.adminListStreams);
     } catch (e) {
       errorMessage.value = e.toString();
       Get.snackbar(

@@ -12,16 +12,27 @@ class AdminCompanyModel {
     this.isActive = true,
   });
 
+  // ✅ FromJson alinhado com a resposta da API
   factory AdminCompanyModel.fromJson(Map<String, dynamic> json) {
     return AdminCompanyModel(
-      id: json['id'],
-      name: json['name'],
-      cnpj: json['cnpj'],
-      isActive: json['is_active'] ?? true,
+      id: json['id'] as int?,
+      name: json['name'] as String,
+      cnpj: json['cnpj'] as String,
+      isActive: json['is_active'] as bool? ?? true,
     );
   }
 
+  // ✅ ToJson para enviar na request (apenas name e cnpj)
   Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'cnpj': cnpj,
+      // Não envia is_active na criação, apenas name e cnpj
+    };
+  }
+
+  // ✅ ToJson completo (caso precise em outros contextos)
+  Map<String, dynamic> toJsonComplete() {
     return {
       if (id != null) 'id': id,
       'name': name,

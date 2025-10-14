@@ -4,13 +4,14 @@
 // ==========================================
 
 import 'dart:convert';
+import 'package:epi_dash_mvp/constants/api_endpoints.dart';
 import 'package:epi_dash_mvp/modules/admin/models/admin_camera_model.dart';
 import 'package:http/http.dart' as http;
 
 class AdminCameraService {
-  final String baseUrl;
+  final AdminEndpoints endpoints;
 
-  AdminCameraService({required this.baseUrl});
+  AdminCameraService({required this.endpoints});
 
   Map<String, String> _buildHeaders(String token) {
     return {
@@ -23,8 +24,8 @@ class AdminCameraService {
       AdminCameraModel camera,
       String token,
       ) async {
-    // TODO: Implementar quando API estiver pronta
-    final url = Uri.parse('$baseUrl/company/${camera.companyId}/cameras');
+
+    final url = endpoints.createCamera(camera.companyId);
 
     try {
       final response = await http.post(
@@ -54,72 +55,6 @@ class AdminCameraService {
           'API endpoint POST /admin/cameras não implementado ainda. '
               'Erro original: ${e.toString()}'
       );
-    }
-  }
-
-  /// Listar todas câmeras (opcional para futuro)
-  Future<List<AdminCameraModel>> fetchAllCameras(String token) async {
-    final url = Uri.parse('$baseUrl/admin/cameras');
-
-    try {
-      final response = await http.get(
-        url,
-        headers: _buildHeaders(token),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => AdminCameraModel.fromJson(json)).toList();
-      } else {
-        throw Exception('Erro ao carregar câmeras: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw UnimplementedError('API endpoint GET /admin/cameras não implementado ainda');
-    }
-  }
-
-  /// Buscar câmera por ID (opcional para futuro)
-  Future<AdminCameraModel> fetchCameraById(int id, String token) async {
-    final url = Uri.parse('$baseUrl/admin/cameras/$id');
-
-    try {
-      final response = await http.get(
-        url,
-        headers: _buildHeaders(token),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return AdminCameraModel.fromJson(data);
-      } else {
-        throw Exception('Erro ao buscar câmera: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw UnimplementedError('API endpoint GET /admin/cameras/:id não implementado ainda');
-    }
-  }
-
-  /// Buscar câmeras por empresa (opcional para futuro)
-  Future<List<AdminCameraModel>> fetchCamerasByCompany(
-      int companyId,
-      String token,
-      ) async {
-    final url = Uri.parse('$baseUrl/admin/companies/$companyId/cameras');
-
-    try {
-      final response = await http.get(
-        url,
-        headers: _buildHeaders(token),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => AdminCameraModel.fromJson(json)).toList();
-      } else {
-        throw Exception('Erro ao carregar câmeras: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw UnimplementedError('API endpoint GET /admin/companies/:id/cameras não implementado ainda');
     }
   }
 }

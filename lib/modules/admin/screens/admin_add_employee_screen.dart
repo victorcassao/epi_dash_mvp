@@ -1,5 +1,6 @@
 // lib/modules/admin/screens/admin_add_employee_screen.dart
 import 'package:epi_dash_mvp/modules/admin/controllers/admin_add_employee_controller.dart';
+import 'package:epi_dash_mvp/routes/admin_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,13 +14,8 @@ class AdminAddEmployeeScreen extends GetView<AdminAddEmployeeController> {
     final emailController = TextEditingController();
     final usernameController = TextEditingController();
     final passwordController = TextEditingController();
-    final roleController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cadastrar Novo Empregado'),
-        backgroundColor: Colors.blue,
-      ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -34,7 +30,7 @@ class AdminAddEmployeeScreen extends GetView<AdminAddEmployeeController> {
                   shrinkWrap: true,
                   children: [
                     const Text(
-                      'Cadastrar Novo Empregado',
+                      'Cadastrar Novo Funcionário',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -177,24 +173,6 @@ class AdminAddEmployeeScreen extends GetView<AdminAddEmployeeController> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
-
-                    // Cargo/Função
-                    TextFormField(
-                      controller: roleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Cargo/Função *',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.work),
-                        hintText: 'Ex: Gerente, Operador, etc.',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Informe o cargo';
-                        }
-                        return null;
-                      },
-                    ),
                     const SizedBox(height: 32),
 
                     // Botões
@@ -206,7 +184,9 @@ class AdminAddEmployeeScreen extends GetView<AdminAddEmployeeController> {
                         children: [
                           Expanded(
                             child: OutlinedButton(
-                              onPressed: isLoading ? null : () => Get.back(),
+                              onPressed: isLoading ? null : () {
+                                Get.toNamed(AdminRoutes.adminListStreams);
+                              },
                               style: OutlinedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                               ),
@@ -225,7 +205,6 @@ class AdminAddEmployeeScreen extends GetView<AdminAddEmployeeController> {
                                     email: emailController.text.trim(),
                                     username: usernameController.text.trim(),
                                     password: passwordController.text.trim(),
-                                    role: roleController.text.trim(),
                                   );
                                 }
                               },
