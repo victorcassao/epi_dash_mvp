@@ -52,7 +52,7 @@ class StreamListScreen extends GetView<StreamsListScreenController> {
           );
         }
 
-        return GenericPaginatedTable<StreamModel>(
+        return GenericPaginatedTable<CameraStreamModel>(
           title: "Streams (${controller.filteredStreams.length})",
           columns: _buildColumns(),
           rows: controller.filteredStreams,
@@ -77,7 +77,7 @@ class StreamListScreen extends GetView<StreamsListScreenController> {
     ];
   }
 
-  DataRow _rowBuilder(StreamModel item) {
+  DataRow _rowBuilder(CameraStreamModel item) {
     return DataRow(
       cells: [
         DataCell(SelectableText(item.location)),
@@ -114,7 +114,7 @@ class StreamListScreen extends GetView<StreamsListScreenController> {
               IconButton(
                 icon: const Icon(Icons.visibility_outlined),
                 onPressed: () {
-                  Get.toNamed('/streams/${item.streamId}');
+                  Get.toNamed('/company/${controller.companyId}/cameras/${item.id}/stream');
                 },
               ),
             ],

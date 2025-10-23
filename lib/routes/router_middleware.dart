@@ -7,7 +7,6 @@ class RouteMiddleware extends GetMiddleware{
 
   @override
   RouteSettings? redirect(String? route) {
-    print("Rodou middleware");
     final isAuthenticated = true;
     return isAuthenticated ? null : const RouteSettings(name: Routes.login);
   }

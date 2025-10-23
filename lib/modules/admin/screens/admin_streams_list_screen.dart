@@ -47,7 +47,7 @@ class AdminStreamsListScreen extends GetView<AdminStreamsListController> {
           );
         }
 
-        return GenericPaginatedTable<AdminStreamModel>(
+        return GenericPaginatedTable<AdminCameraStreamModel>(
           title: "Total: ${controller.filteredStreams.length}",
           columns: _buildColumns(),
           rows: controller.filteredStreams,
@@ -68,7 +68,6 @@ class AdminStreamsListScreen extends GetView<AdminStreamsListController> {
       DataColumn(label: Text("Camera ID")),
       DataColumn(label: Text("Localização")),
       DataColumn(label: Text("Câmera Ativa?")),
-      DataColumn(label: Text("Stream ID")),
       DataColumn(label: Text("FPS")),
       DataColumn(label: Text("Access Key")),
       DataColumn(label: Text("Status Stream")),
@@ -77,7 +76,7 @@ class AdminStreamsListScreen extends GetView<AdminStreamsListController> {
     ];
   }
 
-  DataRow _rowBuilder(AdminStreamModel s) {
+  DataRow _rowBuilder(AdminCameraStreamModel s) {
     return DataRow(cells: [
       DataCell(
         Row(
@@ -85,7 +84,7 @@ class AdminStreamsListScreen extends GetView<AdminStreamsListController> {
             IconButton(
               icon: const Icon(Icons.visibility_outlined),
               onPressed: () {
-                Get.toNamed('/admin/streams/${s.streamId}');
+                Get.toNamed('/admin/cameras/${s.id}/stream');
               },
             ),
           ],
@@ -98,18 +97,17 @@ class AdminStreamsListScreen extends GetView<AdminStreamsListController> {
         s.companyIsActive == true ? Icons.check : Icons.close,
         color: s.companyIsActive == true ? Colors.green : Colors.red,
       )),
-      DataCell(SelectableText(s.cameraId.toString())),
-      DataCell(SelectableText(s.cameraLocation)),
+      DataCell(SelectableText(s.id.toString())),
+      DataCell(SelectableText(s.location)),
       DataCell(Icon(
-        s.cameraIsActive == true ? Icons.check : Icons.close,
-        color: s.cameraIsActive == true ? Colors.green : Colors.red,
+        s.isActive == true ? Icons.check : Icons.close,
+        color: s.isActive == true ? Colors.green : Colors.red,
       )),
-      DataCell(Text(s.streamId.toString())),
-      DataCell(Text(s.streamTargetFps.toString())),
+      DataCell(Text(s.targetFps.toString())),
       DataCell(
         ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 180),
-          child: SelectableText(s.streamAccessKey, maxLines: 1),
+          child: SelectableText(s.accessKey, maxLines: 1),
         ),
       ),
       DataCell(
@@ -124,7 +122,7 @@ class AdminStreamsListScreen extends GetView<AdminStreamsListController> {
           child: Text(s.formattedLastStatus),
         ),
       ),
-      DataCell(Text(s.streamShouldStream == true ? "Sim" : "Não")),
+      DataCell(Text(s.shouldStream == true ? "Sim" : "Não")),
     ]);
   }
 

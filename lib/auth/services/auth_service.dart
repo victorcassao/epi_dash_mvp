@@ -16,11 +16,11 @@ class AuthService {
     final url = endpoints.login;
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {
         'username': username,
         'password': password,
-      }),
+      },
     );
 
     if (response.statusCode == 200) {

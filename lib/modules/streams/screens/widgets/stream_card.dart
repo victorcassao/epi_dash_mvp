@@ -4,7 +4,7 @@ import 'package:epi_dash_mvp/modules/streams/models/stream_model.dart';
 import 'package:flutter/material.dart';
 
 class StreamCard extends StatelessWidget {
-  final StreamModel stream;
+  final CameraStreamModel stream;
 
   const StreamCard({
     required this.stream,
@@ -18,8 +18,7 @@ class StreamCard extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: ListView(
         children: [
-          _infoTile('Stream ID', stream.streamId.toString()),
-          _infoTile('Camera ID', stream.cameraId.toString()),
+          _infoTile('Camera ID', stream.id.toString()),
           _infoTile('Localização', stream.location),
           _infoTile('Modelo', stream.model),
           _infoTile('Status Atual', stream.currentStatus),

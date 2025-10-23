@@ -13,19 +13,18 @@ class AdminStreamDetailScreenController extends GetxController{
     required this.token
   });
 
-  final stream = <AdminStreamModel>[].obs;
+  final stream = <AdminCameraStreamModel>[].obs;
   final isLoading = false.obs;
 
   Future<void> loadAdminStreamDetail() async {
     isLoading.value = true;
-
+    print("Carregando...");
     try{
       final data = await streamService.fetchAdminStreamDetail(
         token,
         streamId
       );
       stream.assign(data);
-      print(data);
     } catch (e) {
       Get.snackbar('Erro', e.toString());
     } finally {

@@ -12,7 +12,7 @@ class AdminStreamsListController extends GetxController {
   });
 
   // ============ STATE ============
-  var allStreams = <AdminStreamModel>[].obs;
+  var allStreams = <AdminCameraStreamModel>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
@@ -21,9 +21,9 @@ class AdminStreamsListController extends GetxController {
   var searchLocation = ''.obs;
 
   // ============ COMPUTED ============
-  List<AdminStreamModel> get filteredStreams {
+  List<AdminCameraStreamModel> get filteredStreams {
     return allStreams.where((stream) {
-      final matchesLocation = stream.cameraLocation
+      final matchesLocation = stream.location
           .toLowerCase()
           .contains(searchLocation.value.toLowerCase());
 

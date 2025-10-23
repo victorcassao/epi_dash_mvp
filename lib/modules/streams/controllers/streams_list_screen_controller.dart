@@ -14,7 +14,7 @@ class StreamsListScreenController extends GetxController {
   });
 
   // ============ STATE ============
-  var streams = <StreamModel>[].obs;
+  var streams = <CameraStreamModel>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
@@ -23,7 +23,7 @@ class StreamsListScreenController extends GetxController {
   var searchLocation = ''.obs;
 
   // ============ COMPUTED ============
-  List<StreamModel> get filteredStreams {
+  List<CameraStreamModel> get filteredStreams {
     return streams.where((stream) {
       final matchesLocation = stream.location
           .toLowerCase()
@@ -49,6 +49,7 @@ class StreamsListScreenController extends GetxController {
 
     try {
       final data = await streamService.fetchAllStreamsByCompanyId(companyId, token);
+      print(data);
       streams.assignAll(data);
     } catch (e) {
       errorMessage.value = e.toString();

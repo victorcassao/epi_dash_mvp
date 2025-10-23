@@ -36,7 +36,6 @@ class AdminCameraService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print(data);
         final newCamera = AdminCameraModel(
           id: data["id"],
           location: data["location"],
@@ -44,7 +43,6 @@ class AdminCameraService {
           targetFps: 2,
           companyId: camera.companyId
         );
-        print(newCamera);
         return newCamera;
       } else {
         throw Exception('Erro ao criar câmera: ${response.statusCode}');

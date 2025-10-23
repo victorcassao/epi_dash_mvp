@@ -16,7 +16,7 @@ class StreamDetailController extends GetxController {
   });
 
   // ============ STATE ============
-  var stream = Rxn<StreamModel>();
+  var stream = Rxn<CameraStreamModel>();
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
@@ -31,6 +31,7 @@ class StreamDetailController extends GetxController {
         streamId,
         token,
       );
+      print(data);
       stream.value = data;
     } catch (e) {
       errorMessage.value = e.toString();

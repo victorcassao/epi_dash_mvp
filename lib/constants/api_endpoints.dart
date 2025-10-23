@@ -4,10 +4,10 @@ class AuthEndpoints {
   AuthEndpoints(this.baseUrl);
 
   /// POST /authentication/user
-  Uri get login => Uri.parse('$baseUrl/authentication/user');
+  Uri get login => Uri.parse('$baseUrl/auth/login');
 
   /// GET /me
-  Uri get me => Uri.parse('$baseUrl/me');
+  Uri get me => Uri.parse('$baseUrl/users/me');
 }
 
 class AdminEndpoints {
@@ -29,7 +29,7 @@ class AdminEndpoints {
   Uri get createCompany => Uri.parse('$baseUrl/admin/company');
 
   Uri streams({int page = 1, int pageSize = 100}) {
-    return Uri.parse('$baseUrl/admin/streams').replace(
+    return Uri.parse('$baseUrl/admin/cameras').replace(
       queryParameters: {
         'page': page.toString(),
         'page_size': pageSize.toString(),
@@ -37,7 +37,7 @@ class AdminEndpoints {
     );
   }
 
-  Uri streamById(int streamId) => Uri.parse('$baseUrl/admin/streams/$streamId');
+  Uri streamById(int streamId) => Uri.parse('$baseUrl/admin/cameras/$streamId/stream');
 
   Uri createCamera(int companyId) =>
       Uri.parse('$baseUrl/company/$companyId/cameras');
@@ -52,7 +52,7 @@ class UserEndpoints {
   UserEndpoints(this.baseUrl);
 
   Uri streams(int companyId, {int page = 1, int pageSize = 100}) {
-    return Uri.parse('$baseUrl/company/$companyId/streams').replace(
+    return Uri.parse('$baseUrl/company/$companyId/cameras').replace(
       queryParameters: {
         'page': page.toString(),
         'page_size': pageSize.toString(),
@@ -61,7 +61,7 @@ class UserEndpoints {
   }
 
   Uri streamById(int companyId, int streamId) =>
-      Uri.parse('$baseUrl/company/$companyId/streams/$streamId');
+      Uri.parse('$baseUrl/company/$companyId/cameras/$streamId/stream');
 }
 
 class HlsEndpoints {

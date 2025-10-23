@@ -11,12 +11,16 @@ class StreamDetailBindings extends Bindings {
 
     // Recuperar stream_id dos parâmetros da rota
     final streamIdParam = Get.parameters['stream_id'];
+    final companyIdParam = Get.parameters['company_id'];
+    
     final int streamId = int.tryParse(streamIdParam ?? '0') ?? 0;
+    final int companyId = int.tryParse(companyIdParam ?? '0') ?? 0;
 
     Get.lazyPut<StreamDetailController>(
           () => StreamDetailController(
         streamService: Get.find<StreamService>(),
-        companyId: user?.employee?.company?.companyId ?? 0,
+        // companyId: user?.employee?.company?.companyId ?? 0,
+        companyId: companyId,
         streamId: streamId,
         token: auth.token.value,
       ),

@@ -15,30 +15,31 @@ class AdminStreamService {
     };
   }
 
-  Future<List<AdminStreamModel>> fetchAllStreams(String token) async {
+  Future<List<AdminCameraStreamModel>> fetchAllStreams(String token) async {
     // final url = Uri.parse('$baseUrl/admin/streams?page=1&page_size=100');
     final url = endpoints.streams();
     final response = await http.get(
         url,
         headers: _buildAndGetHeader(token)
     );
-
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final List list = body['items'];
-      return list.map((e) => AdminStreamModel.fromJson(e)).toList();
+      return list.map((e) => AdminCameraStreamModel.fromJson(e)).toList();
     } else {
       throw Exception('Erro ao carregar streams: ${response.body}');
     }
   }
 
-  Future<AdminStreamModel> fetchAdminStreamDetail(String token, int streamId) async {
+  Future<AdminCameraStreamModel> fetchAdminStreamDetail(String token, int streamId) async {
     final url = endpoints.streamById(streamId);
+    print(url);
     final response = await http.get(
       url,
       headers: _buildAndGetHeader(token)
     );
+    print(response.statusCode);
     final body = jsonDecode(response.body);
-    return AdminStreamModel.fromJson(body);
+    return AdminCameraStreamModel.fromJson(body);
   }
 }

@@ -1,8 +1,7 @@
 import 'package:intl/intl.dart';
 
-class StreamModel {
-  final int streamId;
-  final int cameraId;
+class CameraStreamModel {
+  final int id;
   final String model;
   final String location;
   final bool isActive;
@@ -12,9 +11,8 @@ class StreamModel {
   final DateTime? lastStatusAt;
   final bool shouldStream;
 
-  StreamModel({
-    required this.streamId,
-    required this.cameraId,
+  CameraStreamModel({
+    required this.id,
     required this.model,
     required this.location,
     required this.isActive,
@@ -31,17 +29,18 @@ class StreamModel {
     return DateFormat("dd/MM/yyyy HH:mm").format(local);
   }
 
-  factory StreamModel.fromJson(Map<String, dynamic> json) {
-    return StreamModel(
-      streamId: json['stream_id'],
-      cameraId: json['camera_id'],
-      model: json['model'],
+  factory CameraStreamModel.fromJson(Map<String, dynamic> json) {
+    return CameraStreamModel(
+      id: json['id'],
       location: json['location'],
+      model: json['model'],
       isActive: json['is_active'],
       accessKey: json['access_key'],
       targetFps: json['target_fps'],
       currentStatus: json['current_status'],
-      lastStatusAt: DateTime.parse(json['last_status_at']),
+      lastStatusAt: json["last_status_at"] != null
+            ? DateTime.parse(json["last_status_at"])
+            : null,
       shouldStream: json['should_stream'],
     );
   }

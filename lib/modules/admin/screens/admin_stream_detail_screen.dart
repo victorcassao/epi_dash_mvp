@@ -122,7 +122,7 @@ class AdminStreamDetailScreen extends GetView<AdminStreamDetailScreenController>
                     Expanded(
                       flex: 1,
                       child: StreamPlayerSwitcher(
-                        accessKey: stream.streamAccessKey,
+                        accessKey: stream.accessKey,
                       ),
                     ),
                   ],

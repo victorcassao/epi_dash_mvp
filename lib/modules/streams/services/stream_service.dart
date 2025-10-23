@@ -14,40 +14,39 @@ class StreamService {
       'Content-Type': 'application/json',
     };
   }
-
-  Future<StreamModel> fetchStreamDetail(
+  
+  Future<CameraStreamModel> fetchStreamDetail(
       int companyId,
       int streamId,
       String token
       ) async {
 
     final url = endpoints.streamById(companyId, streamId);
-
     final response = await http.get(
       url,
       headers: _buildAndGetHeader(token)
     );
-
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      return StreamModel.fromJson(body);
+      return CameraStreamModel.fromJson(body);
     } else {
       throw Exception('Erro ao carregar streams: ${response.body}');
     }
   }
 
-  Future<List<StreamModel>> fetchAllStreamsByCompanyId(int companyId, String token) async {
-    print("fetching for $companyId");
+  Future<List<CameraStreamModel>> fetchAllStreamsByCompanyId(int companyId, String token) async {
     final url = endpoints.streams(companyId);
     final response = await http.get(
       url,
       headers: _buildAndGetHeader(token)
     );
-
+    // print(url);
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      final List list = body['streams'];
-      return list.map((e) => StreamModel.fromJson(e)).toList();
+      // print(body);
+      final List list = body['items'];
+      final retorno = list.map((e) => CameraStreamModel.fromJson(e)).toList();
+      return retorno;
     } else {
       throw Exception('Erro ao carregar streams: ${response.body}');
     }
