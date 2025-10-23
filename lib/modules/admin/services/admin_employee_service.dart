@@ -25,10 +25,13 @@ class AdminEmployeeService {
 
     try {
       final requestBody = {
-        'name': employee.name,
-        'username': employee.username,
-        'email': employee.email,
-        'password': employee.password,
+        'role': employee.role,
+        'user': {
+          'name': employee.name,
+          'username': employee.username,
+          'email': employee.email,
+          'password': employee.password,
+        }
       };
 
       final response = await http.post(

@@ -8,4 +8,5 @@ class AdminRoutes{
   static const addCompany = "$baseAdminUrl/company/new";
   static const addEmployee = "$baseAdminUrl/employee/new";
   static const addCamera = "$baseAdminUrl/camera/new";
+  static const adminCameraAlerts = '$baseAdminUrl/alerts/company/:company_id/cameras/:camera_id';
 }

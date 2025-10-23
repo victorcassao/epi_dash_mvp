@@ -2,6 +2,7 @@ import 'package:epi_dash_mvp/modules/admin/models/admin_company_model.dart';
 import 'package:epi_dash_mvp/modules/admin/models/admin_employee_model.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_company_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_employee_service.dart';
+import 'package:epi_dash_mvp/modules/companies/models/employees.dart';
 import 'package:epi_dash_mvp/routes/admin_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,7 @@ class AdminAddEmployeeController extends GetxController {
   var errorMessage = ''.obs;
   var companies = <AdminCompanyModel>[].obs;
   var selectedCompany = Rxn<AdminCompanyModel>();
+  var selectedRole = Rxn<EmployeeRole>();
 
   // ============ LIFECYCLE ============
   @override
@@ -38,7 +40,6 @@ class AdminAddEmployeeController extends GetxController {
       final data = await companyService.fetchAllCompanies(token);
       companies.assignAll(data);
       selectedCompany.value = null;
-
     } catch (e) {
       Get.snackbar(
         'Erro',
@@ -52,12 +53,12 @@ class AdminAddEmployeeController extends GetxController {
     }
   }
 
-  // ✅ Removido parâmetro "role"
   Future<void> createEmployee({
     required String name,
     required String email,
     required String username,
     required String password,
+    required String role,
   }) async {
     // Validação
     if (selectedCompany.value == null) {
@@ -71,18 +72,28 @@ class AdminAddEmployeeController extends GetxController {
       return;
     }
 
+    if (selectedRole.value == null) {
+      Get.snackbar(
+        'Erro',
+        'Selecione um cargo',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     isLoading.value = true;
     errorMessage.value = '';
 
     try {
-      // ✅ Criando employee sem role
       final employee = AdminEmployeeModel(
         name: name,
         email: email,
         username: username,
         password: password,
+        role: role,
         companyId: selectedCompany.value!.id!,
-        // role não é mais enviado
       );
 
       await employeeService.createEmployee(employee, token);

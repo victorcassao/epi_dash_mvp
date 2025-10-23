@@ -1,8 +1,9 @@
+import 'package:epi_dash_mvp/common/widgets/forms/company_dropdown.dart';
+import 'package:epi_dash_mvp/common/widgets/forms/form_action_buttons.dart';
+import 'package:epi_dash_mvp/common/widgets/forms/form_text_field.dart';
 import 'package:epi_dash_mvp/modules/admin/controllers/admin_add_camera_controller.dart';
-import 'package:epi_dash_mvp/modules/admin/models/admin_company_model.dart';
 import 'package:epi_dash_mvp/routes/admin_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class AdminAddCameraScreen extends GetView<AdminAddCameraController> {
@@ -10,10 +11,6 @@ class AdminAddCameraScreen extends GetView<AdminAddCameraController> {
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final locationCtrl = TextEditingController();
-    final modelCtrl = TextEditingController();
-
     return Scaffold(
       body: Center(
         child: ConstrainedBox(
@@ -23,159 +20,131 @@ class AdminAddCameraScreen extends GetView<AdminAddCameraController> {
             margin: const EdgeInsets.all(24),
             child: Padding(
               padding: const EdgeInsets.all(32.0),
-              child: Form(
-                key: formKey,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    const Text(
-                      'Nova Câmera',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Dropdown de Empresas
-                    Obx(() {
-                      if (controller.isLoadingCompanies.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (controller.companies.isEmpty) {
-                        return Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.orange),
-                          ),
-                          child: const Text(
-                            'Nenhuma empresa cadastrada. Cadastre uma empresa primeiro.',
-                            style: TextStyle(color: Colors.orange),
-                          ),
-                        );
-                      }
-
-                      return DropdownButtonFormField<AdminCompanyModel>(
-                        value: controller.selectedCompany.value,
-                        decoration: const InputDecoration(
-                          labelText: 'Empresa *',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.business),
-                        ),
-                        items: controller.companies.map((company) {
-                          return DropdownMenuItem(
-                            value: company,
-                            child: Text(company.name),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          controller.selectedCompany.value = value;
-                        },
-                        validator: (value) {
-                          if (value == null) return 'Selecione uma empresa';
-                          return null;
-                        },
-                      );
-                    }),
-                    const SizedBox(height: 16),
-
-                    // Localização
-                    TextFormField(
-                      controller: locationCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Localização *',
-                        hintText: 'Ex: Entrada Principal, Saída Garagem',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.location_on),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Informe a localização';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Modelo
-                    TextFormField(
-                      controller: modelCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Modelo *',
-                        hintText: 'Ex: Intelbras VHD 1220 B',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.videocam),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Informe o modelo';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    // Botões
-                    Obx(() {
-                      final loading = controller.isLoading.value;
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: loading
-                                  ? null
-                                  : () {
-                                if (formKey.currentState!.validate()) {
-                                  controller.createCamera(
-                                    location: locationCtrl.text.trim(),
-                                    model: modelCtrl.text.trim(),
-                                  );
-                                }
-                              },
-                              icon: loading
-                                  ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                                  : const Icon(Icons.save),
-                              label: Text(loading ? 'Cadastrando...' : 'Cadastrar'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: loading ? null : () {
-                                Get.toNamed(AdminRoutes.adminListStreams);
-                              },
-                              icon: const Icon(Icons.cancel),
-                              label: const Text('Cancelar'),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-                  ],
-                ),
-              ),
+              child: _CameraForm(),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CameraForm extends GetView<AdminAddCameraController> {
+  @override
+  Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final locationCtrl = TextEditingController();
+    final modelCtrl = TextEditingController();
+
+    return Form(
+      key: formKey,
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          // Título
+          const _FormHeader(),
+          const SizedBox(height: 32),
+
+          // Dropdown de Empresas
+          Obx(() => CompanyDropdown(
+            selectedCompany: controller.selectedCompany.value,
+            companies: controller.companies,
+            isLoading: controller.isLoadingCompanies.value,
+            onChanged: (value) {
+              controller.selectedCompany.value = value;
+            },
+            validator: (value) {
+              if (value == null) return 'Selecione uma empresa';
+              return null;
+            },
+          )),
+          const SizedBox(height: 16),
+
+          // Localização
+          FormTextField(
+            controller: locationCtrl,
+            label: 'Localização *',
+            hint: 'Ex: Entrada Principal, Saída Garagem',
+            icon: Icons.location_on,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Informe a localização';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Modelo
+          FormTextField(
+            controller: modelCtrl,
+            label: 'Modelo *',
+            hint: 'Ex: Intelbras VHD 1220 B',
+            icon: Icons.videocam,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Informe o modelo';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 32),
+
+          // Botões
+          Obx(() => FormActionButtons(
+            isLoading: controller.isLoading.value,
+            isEnabled: controller.companies.isNotEmpty,
+            onSubmit: () {
+              if (formKey.currentState!.validate()) {
+                controller.createCamera(
+                  location: locationCtrl.text.trim(),
+                  model: modelCtrl.text.trim(),
+                );
+              }
+            },
+            onCancel: () {
+              Get.toNamed(AdminRoutes.adminListStreams);
+            },
+            submitLabel: 'Cadastrar Câmera',
+            loadingLabel: 'Cadastrando...',
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+class _FormHeader extends StatelessWidget {
+  const _FormHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Icon(
+          Icons.videocam,
+          size: 48,
+          color: Colors.blue,
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Nova Câmera',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Configure uma nova câmera de monitoramento',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[600],
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

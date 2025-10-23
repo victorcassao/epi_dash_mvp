@@ -25,7 +25,8 @@ class AdminCompanyService {
         url,
         headers: _buildHeaders(token),
       );
-
+      print(url);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         final List list = body['items'];
@@ -34,6 +35,7 @@ class AdminCompanyService {
         throw Exception('Erro ao carregar empresas: ${response.statusCode}');
       }
     } catch (e) {
+      print(e);
       throw Exception('Erro ao carregar empresas: ${e.toString()}');
     }
   }

@@ -62,6 +62,25 @@ class UserEndpoints {
 
   Uri streamById(int companyId, int streamId) =>
       Uri.parse('$baseUrl/company/$companyId/cameras/$streamId/stream');
+
+  Uri companyAlerts(int companyId, {int page = 1, int pageSize = 100}) {
+    return Uri.parse('$baseUrl/company/$companyId/cameras/alerts').replace(
+      queryParameters: {
+        'page': page.toString(),
+        'page_size': pageSize.toString(),
+      },
+    );
+  }
+
+  Uri cameraAlerts(int companyId, int cameraId, {int page = 1, int pageSize = 100}) {
+    return Uri.parse('$baseUrl/company/$companyId/cameras/$cameraId/alerts').replace(
+      queryParameters: {
+        'page': page.toString(),
+        'page_size': pageSize.toString(),
+      },
+    );
+  }
+
 }
 
 class HlsEndpoints {

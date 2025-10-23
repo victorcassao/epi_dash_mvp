@@ -12,6 +12,7 @@ import 'package:epi_dash_mvp/modules/admin/services/admin_camera_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_company_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_employee_service.dart';
 import 'package:epi_dash_mvp/modules/admin/services/admin_stream_service.dart';
+import 'package:epi_dash_mvp/modules/alerts/services/alert_service.dart';
 import 'package:epi_dash_mvp/modules/streams/services/stream_service.dart';
 import 'package:get/get.dart';
 
@@ -86,6 +87,11 @@ class AppBindings extends Bindings {
 
     Get.put<StreamService>(
       StreamService(endpoints: Get.find<UserEndpoints>()),
+      permanent: true,
+    );
+
+    Get.put<AlertService>(
+      AlertService(endpoints: Get.find<UserEndpoints>()),
       permanent: true,
     );
 

@@ -4,11 +4,15 @@ import 'package:epi_dash_mvp/common/admin_base_layout.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_add_camera_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_add_company_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_add_employee_bindings.dart';
+import 'package:epi_dash_mvp/modules/admin/bindings/admin_alerts_list_bindings.dart';
+import 'package:epi_dash_mvp/modules/admin/bindings/admin_camera_alerts_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_stream_detail_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/bindings/admin_streams_list_bindings.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_add_camera_screen.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_add_company_screen.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_add_employee_screen.dart';
+import 'package:epi_dash_mvp/modules/admin/screens/admin_alerts_list_screen.dart';
+import 'package:epi_dash_mvp/modules/admin/screens/admin_camera_alerts_screen.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_stream_detail_screen.dart';
 import 'package:epi_dash_mvp/modules/admin/screens/admin_streams_list_screen.dart';
 import 'package:epi_dash_mvp/routes/admin_routes.dart';
@@ -36,11 +40,6 @@ class AdminAppRoutes {
       middlewares: [AdminAuthMiddleware()],
     ),
     GetPage(
-      name: AdminRoutes.adminAlerts,
-      page: () => AdminBaseLayout(body: Center(child: Text("Alertas Admin"))),
-      middlewares: [AdminAuthMiddleware()],
-    ),
-    GetPage(
       name: AdminRoutes.addCompany,
       page: () => AdminBaseLayout(body: AdminAddCompanyScreen()),
       binding: AdminAddCompanyBindings(),
@@ -56,6 +55,18 @@ class AdminAppRoutes {
       name: AdminRoutes.addEmployee,
       page: () => const AdminBaseLayout(body: AdminAddEmployeeScreen()),
       binding: AdminAddEmployeeBindings(),
+      middlewares: [AdminAuthMiddleware()],
+    ),
+    GetPage(
+      name: AdminRoutes.adminAlerts,
+      page: () => AdminBaseLayout(body: AdminAlertsListScreen()),
+      binding: AdminAlertsListBindings(),
+      middlewares: [AdminAuthMiddleware()],
+    ),
+    GetPage(
+      name: AdminRoutes.adminCameraAlerts,
+      page: () => AdminBaseLayout(body: AdminCameraAlertsScreen()),
+      binding: AdminCameraAlertsBindings(),
       middlewares: [AdminAuthMiddleware()],
     )
   ];

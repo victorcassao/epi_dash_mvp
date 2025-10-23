@@ -13,7 +13,7 @@ class AdminEmployeeModel {
     required this.email,
     required this.username,
     required this.password,
-    this.role, // ✅ Opcional
+    this.role,
     required this.companyId,
   });
 
